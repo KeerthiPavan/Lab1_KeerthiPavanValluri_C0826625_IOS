@@ -13,6 +13,7 @@ class ViewController: UIViewController {
     var player1Score: Int = 0
     var player2Score: Int = 0
     var state = [0,0,0,0,0,0,0,0,0]
+    var position = 0
     let winComb = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]
     var gameActive: Bool = true
     var no1Wons: Bool = true
@@ -31,11 +32,32 @@ class ViewController: UIViewController {
         self.view.addGestureRecognizer(swipeUp)
         
         gameLabel.text = "Game Ongoing"
+        becomeFirstResponder()
         
     }
     
+    override var canBecomeFirstResponder: Bool{
+        return true
+    }
+    
+    
+    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        if motion == .motionShake {
+            print("shaked")
+            let button = view.viewWithTag(position) as! UIButton
+            button.setImage(nil, for: .normal)
+            state[position-1] = 0
+            button.isEnabled = true
+            player-=1
+        }
+    }
+    
     @IBAction func tapBtn(_ sender: UIButton) {
+        
+        position = sender.tag
+        
         if (state[sender.tag-1] == 0 && gameActive == true){
+            
             state[sender.tag-1] = player
             if (player == 1){
                 //sender.setTitle("X", for: .normal)
@@ -44,12 +66,15 @@ class ViewController: UIViewController {
                 player = 2
             }
             else{
+                
                 //sender.setTitle("O", for: .normal)
                 sender.setImage(UIImage(named: "circle"), for: .normal)
                 sender.isHidden = false
                 player = 1
             }
+            
         }
+        
         
         
         for i in winComb{
